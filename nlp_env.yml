@@ -1,0 +1,19 @@
+name: nlp_env
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - fastparquet
+  - pyarrow
+  - python=3.12
+  - pyqt
+  - numpy
+  - matplotlib
+  - pandas
+  - pip
+
+  - pip:
+      - pyqtgraph
+      - transformers
+      - torch
