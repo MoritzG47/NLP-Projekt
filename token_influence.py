@@ -1,0 +1,37 @@
+import sys
+import numpy as np
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QApplication
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+
+class token_influence_widget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.figure = Figure(figsize=(7, 7)) 
+        self.canvas = FigureCanvas(self.figure)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.canvas)
+        self.setLayout(layout)
+
+    def plot_influence(self, tokens, scores):
+        self.figure.clear()
+        ax = self.figure.add_subplot(111)
+
+        im = ax.imshow(scores[:, None], cmap='viridis', aspect='auto')
+        self.figure.colorbar(im, ax=ax)
+        ax.set_yticks(range(len(tokens)))
+        ax.set_yticklabels(tokens)
+        ax.set_xticks([])
+        ax.set_title("Token Influence Heatmap (Gradient x Input)")
+        self.canvas.draw()
+
+
+if __name__ == "__main__":
+    tokens = ["[CLS]", "the", "rabbit", "quickly", "hopped", "[SEP]", "the", "turtle", "slowly", "crawled", "[SEP]"]
+    scores = np.random.rand(len(tokens))
+    app = QApplication(sys.argv)
+    w = token_influence_widget()
+    w.plot_influence(tokens, scores)
+    w.show()
+    sys.exit(app.exec_())

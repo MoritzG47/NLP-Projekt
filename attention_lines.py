@@ -1,9 +1,9 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout
-from PyQt6.QtGui import QPainter, QColor, QPen, QFont
-from PyQt6.QtCore import Qt, QPointF
-from PyQt6.QtWidgets import QWidget
-from PyQt6.QtGui import QPainter, QFont, QPen, QColor, QFontMetrics, QBrush
-from PyQt6.QtCore import Qt, QPointF, QRectF
+from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from PyQt5.QtGui import QPainter, QColor, QPen, QFont
+from PyQt5.QtCore import Qt, QPointF
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtGui import QPainter, QFont, QPen, QColor, QFontMetrics, QBrush
+from PyQt5.QtCore import Qt, QPointF, QRectF
 
 class AttentionLinesWidget(QWidget):
     def __init__(self, tokens, attention_matrix, parent=None):
@@ -11,9 +11,9 @@ class AttentionLinesWidget(QWidget):
         self.tokens = tokens               
         self.attn = attention_matrix         
         self.left_margin = 120
-        self.right_margin = 120
-        self.line_height = 28
-        self.token_font = QFont("Consolas", 11)
+        self.right_margin = 200
+        self.line_height = 50
+        self.token_font = QFont("Consolas", 10)
         
         self.hovered_index = -1
         self.setMouseTracking(True)
@@ -177,7 +177,7 @@ class AttentionLinesWidget(QWidget):
 
 
 if __name__ == "__main__":
-    from PyQt6.QtWidgets import QApplication, QMainWindow
+    from PyQt5.QtWidgets import QApplication, QMainWindow
     import numpy as np
     import sys
 
