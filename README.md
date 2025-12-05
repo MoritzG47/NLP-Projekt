@@ -38,6 +38,7 @@ Use the tab interface to switch between the available visualizations.
 
 The primary workspace.
 You can run text through multiple transformer models and display all visualizations at once.
+<img width="1784" height="1096" alt="grafik" src="https://github.com/user-attachments/assets/e5dcb993-cce0-465a-a64b-7c933d3a3c67" />
 
 ---
 
@@ -45,6 +46,7 @@ You can run text through multiple transformer models and display all visualizati
 
 Displays the attention distribution across layers and heads.
 Layer/head selection can be adjusted interactively.
+<img width="1735" height="897" alt="grafik" src="https://github.com/user-attachments/assets/e38939af-f7e4-4527-a1b3-79a0d5bd576d" />
 
 ---
 
@@ -56,6 +58,7 @@ A complementary representation of token attention:
 * **Orange lines**: incoming attention *to* the selected token
 
 Hovering over tokens provides a clearer sense of directional relationships.
+<img width="1730" height="907" alt="grafik" src="https://github.com/user-attachments/assets/934b582d-fd2a-4683-a5a7-0e1cd57f4309" />
 
 ---
 
@@ -63,12 +66,14 @@ Hovering over tokens provides a clearer sense of directional relationships.
 
 Shows each token’s saliency score.
 Useful for identifying which words contribute most strongly to the model’s output.
+<img width="1300" height="662" alt="grafik" src="https://github.com/user-attachments/assets/71c88747-6363-4918-b0c6-a78a2c1d97b6" />
 
 ---
 
 ### **Saliency Timeline**
 
 Displays token saliency across embedding/layer depths as a heatmap, highlighting how influence evolves through the network.
+<img width="1420" height="766" alt="grafik" src="https://github.com/user-attachments/assets/db449468-6b90-43a9-88a6-58fbb2145f61" />
 
 ---
 
@@ -76,6 +81,7 @@ Displays token saliency across embedding/layer depths as a heatmap, highlighting
 
 Uses PCA to reduce saliency dimensions and visualize relationships between tokens.
 Correlated or similarly influential words tend to cluster together in the scatter plot.
+<img width="1559" height="774" alt="grafik" src="https://github.com/user-attachments/assets/28f87626-69e7-45db-9b29-1eca2ec50c2b" />
 
 ---
 
