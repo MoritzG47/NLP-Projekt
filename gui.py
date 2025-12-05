@@ -1,3 +1,5 @@
+print("Starting GUI...")
+print("It might take up to a minute to start up...")
 import sys
 from PyQt5.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout,
@@ -7,14 +9,16 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt, QRectF
-from pyqtgraph import PlotWidget
-import pyqtgraph as pg
 import numpy as np
 import pandas as pd
 import extraction
-import attention_lines
 from language_model import LanguageModel
-from token_influence import token_influence_widget
+from Widgets.attention_lines import AttentionLinesWidget
+from Widgets.token_influence import TokenInfluenceWidget
+from Widgets.attention_heatmap import AttentionHeatmapWidget
+from Widgets.saliency_timeline import SaliencyTimelineWidget
+from Widgets.saliency_projection import SaliencyProjectionWidget
+
 """
 To Do:
 
@@ -111,25 +115,33 @@ class GraphsInterface(QMainWindow):
     def init_model(self, text: str = "The rabbit quickly hopped. The turtle slowly crawled"):
         self.textbox.setText(text)
         self.textbox.setCursorPosition(0)
-        self.hidden_states, self.attentions, self.tokens, self.scores = extraction.extract_all(text, self.lang_model)
-        attn = self.attentions[self.layer][0][self.head].detach().numpy()
+        self.hidden_states, self.attentions, self.tokens, self.saliency = extraction.extract_all(text, self.lang_model)
         self.num_layers = len(self.attentions)
         self.num_heads = self.attentions[0][0].__len__()
+        self.heads = [i for i in range(self.num_heads)]
         tokens = self.tokens
-        scores = self.scores
-        self.show_attention_heatmap(attn, tokens)
-        self.show_attention_lines(attn, tokens)
-        self.show_token_influence(tokens, scores)
+        saliency = self.saliency
+        self.heads_buttons = []
+        self.layer_buttons = []
+        self.heads = [i for i in range(self.num_heads)]
+        self.layer = 0
+        self.show_attention_heatmap(self.attentions, tokens)
+        self.show_attention_lines(self.attentions, tokens)
+        self.show_token_influence(tokens, saliency)
+        self.show_saliency_timeline(tokens, saliency)
+        self.show_saliency_projection(tokens, saliency)
 
     def init_variables(self):
         self.hidden_states = None
         self.attentions = None
         self.tokens = None
-        self.scores = None
+        self.saliency = None
         self.layer = 0
-        self.head = 0
+        self.heads = []
         self.num_layers = 12
         self.num_heads = 12
+        self.heads_buttons: list[list[QPushButton]] = []
+        self.layer_buttons: list[list[QPushButton]] = []
         self.lang_model = LanguageModel()
         
     def center_window(self):
@@ -142,7 +154,7 @@ class GraphsInterface(QMainWindow):
         frame_geometry.moveCenter(center_point)
         self.move(frame_geometry.topLeft())
 
-    def add_tab(self, plot: PlotWidget, title: str):
+    def add_tab(self, plot: QWidget, title: str):
         widget = QWidget()
         layout = QVBoxLayout(widget)
         layout.addWidget(plot)
@@ -192,45 +204,75 @@ class GraphsInterface(QMainWindow):
         self.textbox.setText(text)
         self.textbox.setCursorPosition(0)
         print(f"Processing text: {text}")
-        self.hidden_states, self.attentions, self.tokens, self.scores = extraction.extract_all(text, self.lang_model)
+        self.hidden_states, self.attentions, self.tokens, self.saliency = extraction.extract_all(text, self.lang_model)
         self.update_widgets()
         print("Processing complete.")   
 
-    def update_widgets(self, layer: int=None, head: int=None):
-        self.layer = layer if layer is not None else self.layer
-        self.head = head if head is not None else self.head
+    def update_widgets(self):
         self.update_heatmap()
         self.update_attention_lines()
         self.update_token_influence()
+        self.update_saliency_timeline()
+        self.update_saliency_projection()
+
+    def getButtonStyle(self, active: bool):
+        if active:
+            return """
+                    QPushButton {
+                        background-color: #C9B93D;
+                    }
+                    QPushButton:hover {
+                        background-color: #988A22;
+                    }
+                    QPushButton:pressed {
+                        background-color: #84781E;
+                    }
+                    """
+        else:
+            return """
+                    QPushButton {
+                        background-color: #FFFFFF;
+                    }
+                    QPushButton:hover {
+                        background-color: #E0E0E0;
+                    }
+                    QPushButton:pressed {
+                        background-color: #A0A0A0;
+                    }
+                    """
+
+    def update_attn_widgets(self, layer: int=None, head: int=None):
+        if layer is not None:
+            self.layer = layer
+            for tab in self.layer_buttons:
+                for i, tab_button in enumerate(tab):
+                    if i == layer:
+                        tab_button.setStyleSheet(self.getButtonStyle(True))
+
+                    else:
+                        tab_button.setStyleSheet(self.getButtonStyle(False))
+        if head is not None:
+            if head in self.heads:
+                if len(self.heads) > 1:
+                    self.heads.remove(head)
+                    for tab in self.heads_buttons:
+                        tab[head].setStyleSheet(self.getButtonStyle(False))
+            else:
+                self.heads.append(head)
+                for tab in self.heads_buttons:
+                    tab[head].setStyleSheet(self.getButtonStyle(True))
+        self.update_heatmap()
+        self.update_attention_lines()
 
     def random_text(self):
         text = self.df.sample(n=1)["premise"].values[0]
         return text
 
-    def get_attention_heatmap(self, attn, tokens) -> PlotWidget:
-        """Heatmap base structure by ChatGPT """
-        plot = PlotWidget()
-
-        img = np.array(attn)
-        img = np.flipud(img)
-
-        img_item = pg.ImageItem(img)
-        plot.addItem(img_item)
-
-        # Virdis colormap: Purple (low) to Yellow (high)
-        lut = pg.colormap.get("viridis").getLookupTable(0.0, 1.0, 256)
-        img_item.setLookupTable(lut)
-        img_item.setRect(QRectF(0, 0, img.shape[1], img.shape[0]))
-
-        for i, tok in enumerate(tokens):
-            plot.getAxis("bottom").setTicks([[(i, tok) for i, tok in enumerate(tokens)]])
-        for i, tok in enumerate(tokens):
-            plot.getAxis("left").setTicks([[(i, tokens[::-1][i]) for i in range(len(tokens))]])
-
-        return plot
-
     def show_attention_heatmap(self, attn, tokens):
-        self.plot = self.get_attention_heatmap(attn, tokens)
+        attn_heads = attn[self.layer][0]
+        attn = attn_heads[self.heads].mean(axis=0).detach().numpy()
+        self.plot = AttentionHeatmapWidget()
+        self.plot.plot_heatmap(tokens, attn)
 
         widget = QWidget()
         self.heatmap_layout = QHBoxLayout(widget)
@@ -240,19 +282,15 @@ class GraphsInterface(QMainWindow):
         self.tab_widgets.addTab(widget, f"Attention Heatmap")
 
     def update_heatmap(self):
-        old_widget = self.plot
-        self.heatmap_label.setText(f"Attention Heatmap - Layer {self.layer} Head {self.head}")
-        attn = self.attentions[self.layer][0][self.head].detach().numpy()
-        tokens = self.tokens
-        self.plot = self.get_attention_heatmap(attn, tokens)
-
-        self.heatmap_layout.replaceWidget(old_widget, self.plot)
-
-        old_widget.setParent(None)
-        old_widget.deleteLater()
+        self.heatmap_label.setText(f"Attention Heatmap - Layer {self.layer}")
+        attn_heads = self.attentions[self.layer][0]
+        attn = attn_heads[self.heads].mean(axis=0).detach().numpy()
+        self.plot.plot_heatmap(self.tokens, attn)
 
     def show_attention_lines(self, attn, tokens):
-        self.attn_line_widget = attention_lines.AttentionLinesWidget(tokens, attn)
+        attn_heads = attn[self.layer][0]
+        attn = attn_heads[self.heads].mean(axis=0).detach().numpy()
+        self.attn_line_widget = AttentionLinesWidget(tokens, attn)
         self.attn_line_mainwidget = QWidget()
         self.lines_layout = QHBoxLayout(self.attn_line_mainwidget)
         self.lines_layout.addWidget(self.attn_line_widget, 2)
@@ -261,8 +299,9 @@ class GraphsInterface(QMainWindow):
 
     def update_attention_lines(self):
         old_widget = self.attn_line_widget
-        self.attentionline_label.setText(f"Attention Lines - Layer {self.layer} Head {self.head}")
-        attn = self.attentions[self.layer][0][self.head].detach().numpy()
+        self.attentionline_label.setText(f"Attention Lines - Layer {self.layer}")
+        attn_heads = self.attentions[self.layer][0]
+        attn = attn_heads[self.heads].mean(axis=0).detach().numpy()
         tokens = self.tokens
         self.attn_line_widget.set_attention(tokens, attn)
 
@@ -270,12 +309,10 @@ class GraphsInterface(QMainWindow):
         side_layout = QVBoxLayout()
         side_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         if type == "heatmap":
-            self.heatmap_label = QLabel(f"Attention Heatmap - Layer {self.layer} Head {self.head}")
-            heatmap_legend = QLabel("Color Legend: Low (Purple) to High (Yellow)")
+            self.heatmap_label = QLabel(f"Attention Heatmap - Layer {self.layer}")
             side_layout.addWidget(self.heatmap_label)
-            side_layout.addWidget(heatmap_legend)
         elif type == "lines":
-            self.attentionline_label = QLabel(f"Attention Lines - Layer {self.layer} Head {self.head}")
+            self.attentionline_label = QLabel(f"Attention Lines - Layer {self.layer}")
             attentionline_legend = QLabel("Hover over tokens to see attention lines.\nLine opacity indicates attention weight.")
             side_layout.addWidget(self.attentionline_label)
             side_layout.addWidget(attentionline_legend)
@@ -288,26 +325,60 @@ class GraphsInterface(QMainWindow):
             button_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
             label = QLabel(name)
             button_layout.addWidget(label)
+            buttonlist = []
             for i in range(count):
                 button = QPushButton(f"{i}")
-                button.clicked.connect(lambda _, x=i: self.update_widgets(layer=x if name=="Layers" else None, head=x if name=="Heads" else None))
+                if name == "Heads" and i in self.heads:
+                    button.setStyleSheet(self.getButtonStyle(True))
+                elif name == "Layers" and i == self.layer:
+                    button.setStyleSheet(self.getButtonStyle(True))
+                button.clicked.connect(lambda _, x=i: self.update_attn_widgets(layer=x if name=="Layers" else None, head=x if name=="Heads" else None))
                 button_layout.addWidget(button)
+                buttonlist.append(button)
             sidebutton_layout.addLayout(button_layout)
+            return buttonlist
 
-        add_buttons("Layers", self.num_layers)
-        add_buttons("Heads", self.num_heads)
-        side_layout.addStretch()
+        self.layer_buttons.append(add_buttons("Layers", self.num_layers))
+        self.heads_buttons.append(add_buttons("Heads", self.num_heads))
         side_layout.addLayout(sidebutton_layout)
         layout.addLayout(side_layout, stretch=1)
         return layout
 
-    def show_token_influence(self, tokens, scores):
-        self.token_influence_widget = token_influence_widget()
+    def show_token_influence(self, tokens, saliency):
+        saliency = saliency.sum(dim=-1).squeeze().abs()
+        scores = saliency.detach().numpy()
+        self.token_influence_widget = TokenInfluenceWidget()
         self.token_influence_widget.plot_influence(tokens, scores)
         self.tab_widgets.addTab(self.token_influence_widget, "Token Influence")
 
     def update_token_influence(self):
-        self.token_influence_widget.plot_influence(self.tokens, self.scores)
+        saliency = self.saliency.sum(dim=-1).squeeze().abs()
+        scores = saliency.detach().numpy()
+        self.token_influence_widget.plot_influence(self.tokens, scores)
+
+    def show_saliency_timeline(self, tokens, saliency):
+        self.saliency_timeline_widget = SaliencyTimelineWidget()
+        saliency_matrix = saliency.squeeze(0).abs()
+        saliency_matrix = saliency_matrix.detach().numpy()
+        self.saliency_timeline_widget.plot_saliency_heatmap(tokens, saliency_matrix)
+        self.tab_widgets.addTab(self.saliency_timeline_widget, "Saliency Timeline")
+
+    def update_saliency_timeline(self):
+        saliency_matrix = self.saliency.squeeze(0).abs()
+        saliency_matrix = saliency_matrix.detach().numpy()
+        self.saliency_timeline_widget.plot_saliency_heatmap(self.tokens, saliency_matrix)
+
+    def show_saliency_projection(self, tokens, saliency):
+        self.saliency_projection_widget = SaliencyProjectionWidget()
+        saliency_matrix = saliency.squeeze(0).abs()
+        saliency_matrix = saliency_matrix.detach().numpy()
+        self.saliency_projection_widget.plot_projection(tokens, saliency_matrix)
+        self.tab_widgets.addTab(self.saliency_projection_widget, "Saliency Projection")
+
+    def update_saliency_projection(self):
+        saliency_matrix = self.saliency.squeeze(0).abs()
+        saliency_matrix = saliency_matrix.detach().numpy()
+        self.saliency_projection_widget.plot_projection(self.tokens, saliency_matrix)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

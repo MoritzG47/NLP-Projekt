@@ -2,15 +2,18 @@ import sys
 import numpy as np
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QApplication
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
-class token_influence_widget(QWidget):
+class TokenInfluenceWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.figure = Figure(figsize=(7, 7)) 
         self.canvas = FigureCanvas(self.figure)
+        self.toolbar = NavigationToolbar(self.canvas, self)
 
         layout = QVBoxLayout()
+        layout.addWidget(self.toolbar)
         layout.addWidget(self.canvas)
         self.setLayout(layout)
 
@@ -31,7 +34,7 @@ if __name__ == "__main__":
     tokens = ["[CLS]", "the", "rabbit", "quickly", "hopped", "[SEP]", "the", "turtle", "slowly", "crawled", "[SEP]"]
     scores = np.random.rand(len(tokens))
     app = QApplication(sys.argv)
-    w = token_influence_widget()
+    w = TokenInfluenceWidget()
     w.plot_influence(tokens, scores)
     w.show()
     sys.exit(app.exec_())

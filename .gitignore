@@ -3,3 +3,5 @@ test.py
 filter_parquet.py
 test2.py
 test.yml
+/Widgets/__pycache__
+/__pycache__

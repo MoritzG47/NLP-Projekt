@@ -11,10 +11,10 @@ class LanguageModel:
 
     def get_model_outputs(self, text: str) -> tuple[ModelOutputs, list[str]]:
         inputs = self.tokenizer(text, return_tensors="pt")
-        scores = self.token_influence(inputs)
+        saliency = self.token_influence(inputs)
         tokens = self.tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
         outputs: ModelOutputs = self.model(**inputs)
-        return outputs, tokens, scores
+        return outputs, tokens, saliency
 
     def change_model(self, new_model: str):
         self.tokenizer = AutoTokenizer.from_pretrained(new_model)
@@ -42,10 +42,8 @@ class LanguageModel:
 
         grad_wrt_weights = emb_layer.weight.grad[input_ids]
         # saliency = gradient × input
-        saliency = (embeddings * grad_wrt_weights).sum(dim=-1).squeeze().abs()
-        scores = saliency.detach().numpy()
-
-        return scores
+        saliency = (embeddings * grad_wrt_weights)
+        return saliency
 
 if __name__ == "__main__":
     lm = LanguageModel()
