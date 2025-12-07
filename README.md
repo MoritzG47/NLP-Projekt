@@ -8,8 +8,8 @@ The interface lets you run text through multiple NLP models and inspect attentio
 ## **Setup**
 
 ```bash
-conda env create -f nlp_env.yml
-conda activate nlp_env
+conda env create -f nlp_proj.yml
+conda activate nlp_proj
 ```
 ---
 
@@ -38,7 +38,7 @@ Use the tab interface to switch between the available visualizations.
 
 The primary workspace.
 You can run text through multiple transformer models and display all visualizations at once.
-<img width="1784" height="1096" alt="grafik" src="https://github.com/user-attachments/assets/e5dcb993-cce0-465a-a64b-7c933d3a3c67" />
+<img width="1774" height="1100" alt="grafik" src="https://github.com/user-attachments/assets/ab149a7b-7a84-4390-96b6-69638189ce00" />
 
 ---
 
@@ -82,6 +82,27 @@ Displays token saliency across embedding/layer depths as a heatmap, highlighting
 Uses PCA to reduce saliency dimensions and visualize relationships between tokens.
 Correlated or similarly influential words tend to cluster together in the scatter plot.
 <img width="1559" height="774" alt="grafik" src="https://github.com/user-attachments/assets/28f87626-69e7-45db-9b29-1eca2ec50c2b" />
+
+---
+
+### **Hidden State Evolution**
+
+Shows the evolution of the L2 Norm of the Hiddenstates for each token.
+<img width="1397" height="772" alt="grafik" src="https://github.com/user-attachments/assets/5cb4d09e-b276-4cc0-8f5d-04ad7b22ffa6" />
+
+---
+
+### **Integrated Gradients at Hidden States**
+
+Each tokens Integrated Gradients at selectable Hidden States.
+<img width="1562" height="690" alt="grafik" src="https://github.com/user-attachments/assets/005e86fd-68ee-4162-ad1d-13abcfb0eefc" />
+
+---
+
+### **Attention Rollout**
+
+Attention Rollout over animated over layers.
+<img width="865" height="709" alt="grafik" src="https://github.com/user-attachments/assets/0c1a4877-a0e2-48f8-98bc-b7bcd85bd773" />
 
 ---
 
