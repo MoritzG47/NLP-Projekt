@@ -4,12 +4,11 @@ import sys
 from PyQt5.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout,
     QTabWidget, QLineEdit, QApplication, 
-    QPushButton, QHBoxLayout, QLabel, QTextEdit,
+    QPushButton, QHBoxLayout, QLabel,
     QComboBox
 )
 from PyQt5.QtGui import QFont
-from PyQt5.QtCore import Qt, QRectF
-import numpy as np
+from PyQt5.QtCore import Qt
 import pandas as pd
 import extraction
 from language_model import LanguageModel
@@ -18,11 +17,9 @@ from Widgets.token_influence import TokenInfluenceWidget
 from Widgets.attention_heatmap import AttentionHeatmapWidget
 from Widgets.saliency_timeline import SaliencyTimelineWidget
 from Widgets.saliency_projection import SaliencyProjectionWidget
-
-"""
-To Do:
-
-"""
+from Widgets.hidden_state_evolution import HiddenStateEvolutionWidget
+from Widgets.ig_at_hs import IGatHSWidget
+from Widgets.attention_rollout import RolloutWidget
 
 class GraphsInterface(QMainWindow):
     def __init__(self):
@@ -117,7 +114,8 @@ class GraphsInterface(QMainWindow):
         self.textbox.setCursorPosition(0)
         self.hidden_states, self.attentions, self.tokens, self.saliency = extraction.extract_all(text, self.lang_model)
         self.num_layers = len(self.attentions)
-        self.num_heads = self.attentions[0][0].__len__()
+        self.num_heads = len(self.attentions[0][0])
+        self.num_hs_layers = len(self.hidden_states)
         self.heads = [i for i in range(self.num_heads)]
         tokens = self.tokens
         saliency = self.saliency
@@ -125,11 +123,15 @@ class GraphsInterface(QMainWindow):
         self.layer_buttons = []
         self.heads = [i for i in range(self.num_heads)]
         self.layer = 0
+        self.hs_layer = 0
         self.show_attention_heatmap(self.attentions, tokens)
         self.show_attention_lines(self.attentions, tokens)
         self.show_token_influence(tokens, saliency)
         self.show_saliency_timeline(tokens, saliency)
         self.show_saliency_projection(tokens, saliency)
+        self.show_hidden_state_evolution(tokens, self.hidden_states)
+        self.show_ig_at_hs(tokens, self.hidden_states, self.hs_layer)
+        self.show_attention_rollout(self.attentions, tokens)
 
     def init_variables(self):
         self.hidden_states = None
@@ -137,9 +139,11 @@ class GraphsInterface(QMainWindow):
         self.tokens = None
         self.saliency = None
         self.layer = 0
+        self.hs_layer = 0
         self.heads = []
         self.num_layers = 12
         self.num_heads = 12
+        self.num_hs_layers = 13
         self.heads_buttons: list[list[QPushButton]] = []
         self.layer_buttons: list[list[QPushButton]] = []
         self.lang_model = LanguageModel()
@@ -214,6 +218,9 @@ class GraphsInterface(QMainWindow):
         self.update_token_influence()
         self.update_saliency_timeline()
         self.update_saliency_projection()
+        self.update_hidden_state_evolution()
+        self.update_ig_at_hs(self.hs_layer)
+        self.update_attention_rollout()
 
     def getButtonStyle(self, active: bool):
         if active:
@@ -379,6 +386,42 @@ class GraphsInterface(QMainWindow):
         saliency_matrix = self.saliency.squeeze(0).abs()
         saliency_matrix = saliency_matrix.detach().numpy()
         self.saliency_projection_widget.plot_projection(self.tokens, saliency_matrix)
+
+    def show_hidden_state_evolution(self, tokens, hidden_states):
+        self.hidden_state_evolution_widget = HiddenStateEvolutionWidget()
+        self.hidden_state_evolution_widget.plot_hidden_states(tokens, hidden_states)
+        self.tab_widgets.addTab(self.hidden_state_evolution_widget, "Hidden State Evo.")
+
+    def update_hidden_state_evolution(self):
+        self.hidden_state_evolution_widget.plot_hidden_states(self.tokens, self.hidden_states)
+
+    def show_ig_at_hs(self, tokens, hidden_states, layer_index):
+        self.ig_at_hs_widget = QWidget()
+        layout = QVBoxLayout(self.ig_at_hs_widget)
+        self.ig_at_hs_plot = IGatHSWidget()
+        self.ig_at_hs_plot.plot_ig_barplot(tokens, hidden_states, layer_index)
+
+        layer_combo = QComboBox()
+        layer_combo.setFont(self.font())
+        layer_combo.addItems([f"Hidden Layer: {i}" for i in range(self.num_hs_layers)])
+        layer_combo.setCurrentIndex(layer_index)
+        layer_combo.currentIndexChanged.connect(lambda index: self.update_ig_at_hs(index))
+        layout.addWidget(layer_combo)
+        layout.addWidget(self.ig_at_hs_plot)
+        self.tab_widgets.addTab(self.ig_at_hs_widget, "IG at Hidden States")
+
+    def update_ig_at_hs(self, layer_index):
+        self.ig_at_hs_plot.plot_ig_barplot(self.tokens, self.hidden_states, layer_index)
+
+    def show_attention_rollout(self, attentions, tokens):
+        self.rollout_widget = RolloutWidget()
+        rollouts = self.rollout_widget.calc_attention_rollout_per_layer(attentions)
+        self.rollout_widget.plot_rollout_animation(rollouts, tokens)
+        self.tab_widgets.addTab(self.rollout_widget, "Attention Rollout")
+
+    def update_attention_rollout(self):
+        rollouts = self.rollout_widget.calc_attention_rollout_per_layer(self.attentions)
+        self.rollout_widget.plot_rollout_animation(rollouts, self.tokens)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

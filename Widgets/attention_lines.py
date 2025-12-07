@@ -8,7 +8,8 @@ from PyQt5.QtCore import Qt, QPointF, QRectF
 class AttentionLinesWidget(QWidget):
     def __init__(self, tokens, attention_matrix, parent=None):
         super().__init__(parent)
-        self.tokens = tokens               
+        self.tokens = tokens
+        token_length = len(tokens) if tokens is not None else 8              
         self.attn = attention_matrix         
         self.left_margin = 120
         self.right_margin = 200
@@ -22,7 +23,7 @@ class AttentionLinesWidget(QWidget):
         self.right_token_rects = []
         
         self.setMinimumWidth(500)
-        self.setMinimumHeight(len(tokens) * self.line_height + 40)
+        self.setMinimumHeight(token_length * self.line_height + 40)
 
     def set_attention(self, tokens, attention_matrix):
         """Allows dynamic updates."""

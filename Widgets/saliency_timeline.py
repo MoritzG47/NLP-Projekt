@@ -38,8 +38,6 @@ class SaliencyTimelineWidget(QWidget):
         self.canvas.draw()
 
 
-
-
 if __name__ == "__main__":
     import sys
     from PyQt5.QtWidgets import QApplication

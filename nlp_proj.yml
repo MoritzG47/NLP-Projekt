@@ -60,7 +60,6 @@ dependencies:
   - idna=3.11=py311haa95532_0
   - importlib-metadata=7.0.1=py311haa95532_0
   - importlib_metadata=7.0.1=hd3eb1b0_0
-  - intel-openmp=2024.2.1=h57928b3_1083
   - jinja2=3.1.6=py311haa95532_0
   - joblib=1.5.2=pyhd8ed1ab_0
   - jpeg=9f=ha349fce_0
@@ -104,7 +103,6 @@ dependencies:
   - libxslt=1.1.43=hd1fac9c_0
   - libzlib=1.3.1=h02ab6af_0
   - llvm-openmp=20.1.8=h29ce207_0
-  - llvmlite=0.44.0=py311h8b1c7eb_1
   - lz4-c=1.10.0=h2466b09_1
   - m2w64-gcc-libgfortran=5.3.0=6
   - m2w64-gcc-libs=5.3.0=7
@@ -114,7 +112,6 @@ dependencies:
   - markupsafe=3.0.2=py311h827c3e9_0
   - matplotlib=3.10.6=py311haa95532_1
   - matplotlib-base=3.10.6=py311h43afe63_1
-  - mkl=2024.2.2=h66d3029_15
   - mkl-service=2.5.2=py311h21a4f29_1
   - mkl_fft=2.0.0=py311h3a95523_1
   - mkl_random=1.2.11=py311h4dd216f_0
@@ -124,7 +121,6 @@ dependencies:
   - mpmath=1.3.0=py311haa95532_0
   - msys2-conda-epoch=20160418=1
   - networkx=3.5=py311haa95532_0
-  - numba=0.61.2=py311h5da7b33_0
   - numexpr=2.14.1=mkl_py311hcc47716_1
   - numpy=1.26.4=py311h0b4df5a_0
   - openjpeg=2.5.2=hae555c5_0
@@ -163,12 +159,10 @@ dependencies:
   - scikit-learn=1.7.2=py311h8a15ebc_0
   - setuptools=80.9.0=py311haa95532_0
   - sip=6.12.0=py311h706e071_0
-  - six=1.16.0=pyhd3eb1b0_1
   - sleef=3.9.0=h67fd636_0
   - snappy=1.2.2=h7fa0ca8_1
   - sqlite=3.51.0=hda9a48d_0
   - sympy=1.14.0=py311haa95532_1
-  - tbb=2021.8.0=h59b6b97_0
   - threadpoolctl=3.6.0=pyhecae5ae_0
   - thrift=0.22.0=py311h214f63a_0
   - tk=8.6.13=h2c6b04d_3
@@ -201,28 +195,55 @@ dependencies:
       - aiohttp==3.13.2
       - aiosignal==1.4.0
       - anyio==4.12.0
+      - asttokens==3.0.1
       - attrs==25.4.0
+      - cloudpickle==3.1.2
       - datasets==4.4.1
+      - decorator==5.2.1
       - dill==0.4.0
+      - executing==2.2.1
       - frozenlist==1.8.0
       - h11==0.16.0
       - httpcore==1.0.9
       - httpx==0.28.1
       - huggingface-hub==0.36.0
+      - intel-cmplr-lib-ur==2025.3.1
+      - intel-openmp==2025.3.1
+      - ipython==9.8.0
+      - ipython-pygments-lexers==1.1.1
+      - jedi==0.19.2
+      - llvmlite==0.45.1
+      - matplotlib-inline==0.2.1
+      - mkl==2025.3.0
       - multidict==6.7.0
       - multiprocess==0.70.18
+      - numba==0.62.1
+      - onemkl-license==2025.3.0
+      - parso==0.8.5
+      - prompt-toolkit==3.0.52
       - propcache==0.4.1
+      - pure-eval==0.2.3
       - pyarrow==22.0.0
+      - pygments==2.19.2
       - pyqt5-stubs==5.15.6.0
       - regex==2025.11.3
       - safetensors==0.7.0
       - scipy==1.16.3
       - sentencepiece==0.2.1
+      - shap==0.42.1
+      - six==1.17.0
+      - slicer==0.0.7
+      - stack-data==0.6.3
+      - tbb==2022.3.0
+      - tcmlib==1.4.1
       - tokenizers==0.22.1
       - torch==2.9.1+cpu
       - torchaudio==2.9.1+cpu
       - torchvision==0.24.1+cpu
+      - traitlets==5.14.3
       - transformers==4.57.3
+      - umf==1.0.2
+      - wcwidth==0.2.14
       - xxhash==3.6.0
       - yarl==1.22.0
 prefix: C:\Users\morit\miniforge3\envs\nlp_proj

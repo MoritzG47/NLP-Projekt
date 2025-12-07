@@ -17,8 +17,10 @@ class LanguageModel:
         return outputs, tokens, saliency
 
     def change_model(self, new_model: str):
-        self.tokenizer = AutoTokenizer.from_pretrained(new_model)
-        self.model = AutoModel.from_pretrained(new_model, output_hidden_states=True, output_attentions=True)
+        if new_model in ["distilbert-base-uncased", "roberta-base", "bert-base-uncased"]:
+            self.tokenizer = AutoTokenizer.from_pretrained(new_model)
+            self.model = AutoModel.from_pretrained(new_model, output_hidden_states=True, output_attentions=True)
+            self.model.eval()
 
     def token_influence(self, input) -> list[float]:
         input_ids = input["input_ids"]
