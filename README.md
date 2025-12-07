@@ -1,6 +1,6 @@
 # **P14 – Transparent Minds (NLP Project)**
 
-A visual exploration tool for interpreting transformer language models.
+A visual exploration tool for interpreting encoder-only transformer language models.
 The interface lets you run text through multiple NLP models and inspect attention, saliency, and PCA-based projections through a set of interactive visualizations.
 
 ---
