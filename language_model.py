@@ -7,13 +7,13 @@ class LanguageModel:
 
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL)
         self.model = AutoModel.from_pretrained(MODEL, output_hidden_states=True, output_attentions=True)
-        self.model.eval()  # Set model to evaluation mode
+        self.model.eval()
 
     def get_model_outputs(self, text: str) -> tuple[ModelOutputs, list[str]]:
         inputs = self.tokenizer(text, return_tensors="pt")
-        saliency = self.token_influence(inputs)
         tokens = self.tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
         outputs: ModelOutputs = self.model(**inputs)
+        saliency = self.token_influence(inputs)
         return outputs, tokens, saliency
 
     def change_model(self, new_model: str):
@@ -30,7 +30,7 @@ class LanguageModel:
         inputs_embeds.requires_grad_(True)
         outputs = self.model(inputs_embeds=inputs_embeds)
         last_hidden_state = outputs.last_hidden_state
-        # Use CLS embedding as "score" (common for encoder-only models)
+        # Use CLS embedding as "score"
         cls_score = last_hidden_state[:, 0, :].sum()  # scalar needed for backprop
 
         # Reset gradients to zero before backpropagation

@@ -4,7 +4,9 @@ from PyQt5.QtCore import Qt, QPointF
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPainter, QFont, QPen, QColor, QFontMetrics, QBrush
 from PyQt5.QtCore import Qt, QPointF, QRectF
-
+"""
+Drawing the widget and visual logic made with help from ChatGPT.
+"""
 class AttentionLinesWidget(QWidget):
     def __init__(self, tokens, attention_matrix, parent=None):
         super().__init__(parent)
@@ -13,7 +15,7 @@ class AttentionLinesWidget(QWidget):
         self.attn = attention_matrix         
         self.left_margin = 120
         self.right_margin = 200
-        self.line_height = 50
+        self.line_height = 40
         self.token_font = QFont("Consolas", 10)
         
         self.hovered_index = -1
@@ -26,14 +28,12 @@ class AttentionLinesWidget(QWidget):
         self.setMinimumHeight(token_length * self.line_height + 40)
 
     def set_attention(self, tokens, attention_matrix):
-        """Allows dynamic updates."""
         self.tokens = tokens
         self.attn = attention_matrix
         self.update_token_rects()
         self.update()
 
     def update_token_rects(self):
-        """Update token bounding rectangles for hit testing."""
         seq_len = len(self.tokens)
         width = self.width()
         
@@ -53,12 +53,10 @@ class AttentionLinesWidget(QWidget):
             self.right_token_rects.append(right_rect)
 
     def resizeEvent(self, event):
-        """Update token rectangles when widget is resized."""
         super().resizeEvent(event)
         self.update_token_rects()
 
     def mouseMoveEvent(self, event):
-        """Handle mouse hover events."""
         pos = event.pos()
         pos_f = QPointF(pos)
         old_hover = self.hovered_index
@@ -83,7 +81,6 @@ class AttentionLinesWidget(QWidget):
             self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def leaveEvent(self, event):
-        """Clear hover when mouse leaves widget."""
         if self.hovered_index != -1:
             self.hovered_index = -1
             self.update()
@@ -95,7 +92,6 @@ class AttentionLinesWidget(QWidget):
         painter.setFont(self.token_font)
         seq_len = len(self.tokens)
 
-        # --- Compute vertical positions ---
         y_positions = [
             20 + i * self.line_height
             for i in range(seq_len)
@@ -104,7 +100,6 @@ class AttentionLinesWidget(QWidget):
         if not self.left_token_rects or not self.right_token_rects:
             self.update_token_rects()
 
-        # --- Draw tokens on left ---
         for i, tok in enumerate(self.tokens):
             if i == self.hovered_index:
                 painter.save()
@@ -115,7 +110,6 @@ class AttentionLinesWidget(QWidget):
             else:
                 painter.drawText(10, y_positions[i] + 5, tok)
 
-        # --- Draw tokens on right ---
         width = self.width()
         for i, tok in enumerate(self.tokens):
             if i == self.hovered_index:
@@ -127,7 +121,6 @@ class AttentionLinesWidget(QWidget):
             else:
                 painter.drawText(width - self.right_margin + 10, y_positions[i] + 5, tok)
 
-        # --- Draw attention lines ---
         max_attn = self.attn.max() if self.attn.max() > 0 else 1.0
         left_x = self.left_margin
         right_x = width - self.right_margin
