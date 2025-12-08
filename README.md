@@ -1,6 +1,6 @@
-# **P14 – Transparent Minds (NLP Project)**
+# **P14 - Transparent Minds (NLP Project)**
 
-A visual exploration tool for interpreting transformer language models.
+A visual exploration tool for interpreting encoder-only transformer language models.
 The interface lets you run text through multiple NLP models and inspect attention, saliency, and PCA-based projections through a set of interactive visualizations.
 
 ---
@@ -103,7 +103,7 @@ Each tokens Integrated Gradients at selectable Hidden States.
 
 ### **Attention Rollout**
 
-Attention Rollout over animated over layers.
+Attention Rollout animated over the layers.
 <img width="865" height="709" alt="grafik" src="https://github.com/user-attachments/assets/0c1a4877-a0e2-48f8-98bc-b7bcd85bd773" />
 
 ---
