@@ -246,4 +246,3 @@ dependencies:
       - wcwidth==0.2.14
       - xxhash==3.6.0
       - yarl==1.22.0
-prefix: C:\Users\morit\miniforge3\envs\nlp_proj

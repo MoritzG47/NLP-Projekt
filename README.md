@@ -15,6 +15,8 @@ conda activate nlp_proj
 
 ## **Usage**
 
+Run gui.py or the notebook (might not be implemented yet).
+
 ### **Random Button**
 
 Fetches a random sentence from the filtered **MultiNLI** dataset:
