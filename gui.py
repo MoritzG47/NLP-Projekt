@@ -130,7 +130,7 @@ class GraphsInterface(QMainWindow):
         #self.show_saliency_timeline(tokens, saliency)
         self.show_saliency_projection(tokens, saliency)
         #self.show_hidden_state_evolution(tokens, self.hidden_states)
-        #self.show_ig_at_hs(tokens, self.hidden_states, self.hs_layer)
+        self.show_ig_at_hs(tokens, self.hidden_states, self.hs_layer)
         #self.show_attention_rollout(self.attentions, tokens)
 
     def init_variables(self):
@@ -219,7 +219,7 @@ class GraphsInterface(QMainWindow):
         #self.update_saliency_timeline()
         self.update_saliency_projection()
         #self.update_hidden_state_evolution()
-        #self.update_ig_at_hs(self.hs_layer)
+        self.update_ig_at_hs(self.hs_layer)
         #self.update_attention_rollout()
 
     def getButtonStyle(self, active: bool):
