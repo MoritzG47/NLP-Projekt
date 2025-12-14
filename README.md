@@ -72,13 +72,6 @@ Useful for identifying which words contribute most strongly to the model’s out
 
 ---
 
-### **Saliency Timeline**
-
-Displays token saliency across embedding/layer depths as a heatmap, highlighting how influence evolves through the network.
-<img width="1420" height="766" alt="grafik" src="https://github.com/user-attachments/assets/db449468-6b90-43a9-88a6-58fbb2145f61" />
-
----
-
 ### **Saliency Projection (PCA)**
 
 Uses PCA to reduce saliency dimensions and visualize relationships between tokens.
@@ -87,24 +80,10 @@ Correlated or similarly influential words tend to cluster together in the scatte
 
 ---
 
-### **Hidden State Evolution**
-
-Shows the evolution of the L2 Norm of the Hiddenstates for each token.
-<img width="1397" height="772" alt="grafik" src="https://github.com/user-attachments/assets/5cb4d09e-b276-4cc0-8f5d-04ad7b22ffa6" />
-
----
-
 ### **Integrated Gradients at Hidden States**
 
 Each tokens Integrated Gradients at selectable Hidden States.
 <img width="1562" height="690" alt="grafik" src="https://github.com/user-attachments/assets/005e86fd-68ee-4162-ad1d-13abcfb0eefc" />
-
----
-
-### **Attention Rollout**
-
-Attention Rollout animated over the layers.
-<img width="865" height="709" alt="grafik" src="https://github.com/user-attachments/assets/0c1a4877-a0e2-48f8-98bc-b7bcd85bd773" />
 
 ---
 
@@ -120,7 +99,7 @@ ChatGPT was used *partially* for:
 
 ---
 
-## **Acknowledgments**
+## **Acknowledgments/References**
 
 Design inspirations:
 **BertViz** – [https://github.com/jessevig/bertviz](https://github.com/jessevig/bertviz)
