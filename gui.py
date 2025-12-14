@@ -127,11 +127,11 @@ class GraphsInterface(QMainWindow):
         self.show_attention_heatmap(self.attentions, tokens)
         self.show_attention_lines(self.attentions, tokens)
         self.show_token_influence(tokens, saliency)
-        self.show_saliency_timeline(tokens, saliency)
+        #self.show_saliency_timeline(tokens, saliency)
         self.show_saliency_projection(tokens, saliency)
-        self.show_hidden_state_evolution(tokens, self.hidden_states)
-        self.show_ig_at_hs(tokens, self.hidden_states, self.hs_layer)
-        self.show_attention_rollout(self.attentions, tokens)
+        #self.show_hidden_state_evolution(tokens, self.hidden_states)
+        #self.show_ig_at_hs(tokens, self.hidden_states, self.hs_layer)
+        #self.show_attention_rollout(self.attentions, tokens)
 
     def init_variables(self):
         self.hidden_states = None
@@ -216,11 +216,11 @@ class GraphsInterface(QMainWindow):
         self.update_heatmap()
         self.update_attention_lines()
         self.update_token_influence()
-        self.update_saliency_timeline()
+        #self.update_saliency_timeline()
         self.update_saliency_projection()
-        self.update_hidden_state_evolution()
-        self.update_ig_at_hs(self.hs_layer)
-        self.update_attention_rollout()
+        #self.update_hidden_state_evolution()
+        #self.update_ig_at_hs(self.hs_layer)
+        #self.update_attention_rollout()
 
     def getButtonStyle(self, active: bool):
         if active:

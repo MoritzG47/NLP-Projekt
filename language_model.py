@@ -1,3 +1,4 @@
+import torch
 from transformers import AutoTokenizer, AutoModel
 from transformers.modeling_outputs import BaseModelOutputWithPoolingAndCrossAttentions as ModelOutputs
 
@@ -21,31 +22,24 @@ class LanguageModel:
             self.tokenizer = AutoTokenizer.from_pretrained(new_model)
             self.model = AutoModel.from_pretrained(new_model, output_hidden_states=True, output_attentions=True)
             self.model.eval()
-
-    def token_influence(self, input) -> list[float]:
+    
+    def token_influence(self, input) -> torch.Tensor:
         input_ids = input["input_ids"]
 
         embedding_layer = self.model.embeddings.word_embeddings
         inputs_embeds = embedding_layer(input_ids)
         inputs_embeds.requires_grad_(True)
-        outputs = self.model(inputs_embeds=inputs_embeds)
-        last_hidden_state = outputs.last_hidden_state
-        # Use CLS embedding as "score"
-        cls_score = last_hidden_state[:, 0, :].sum()  # scalar needed for backprop
+        inputs_embeds.retain_grad()
 
-        # Reset gradients to zero before backpropagation
+        outputs = self.model(inputs_embeds=inputs_embeds)
+        cls_score = outputs.last_hidden_state[:, 0, :].sum()
+
         self.model.zero_grad()
         cls_score.backward()
 
-        # Retrieve embeddings & grads
-        emb_layer = self.model.embeddings.word_embeddings
-        embeddings = emb_layer(input_ids)
-        grads = input_ids.grad
-
-        grad_wrt_weights = emb_layer.weight.grad[input_ids]
-        # saliency = gradient × input
-        saliency = (embeddings * grad_wrt_weights)
+        saliency = (inputs_embeds.grad * inputs_embeds)
         return saliency
+
 
 if __name__ == "__main__":
     lm = LanguageModel()

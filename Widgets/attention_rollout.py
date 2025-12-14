@@ -1,4 +1,5 @@
 import sys
+from matplotlib import colors
 import torch
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
 from PyQt5.QtCore import QTimer
@@ -32,6 +33,8 @@ class RolloutWidget(QWidget):
         self.ax.set_xticklabels(tokens, rotation=45)
         self.ax.set_yticklabels(tokens)
 
+        self.canvas.draw()
+
         self.timer = QTimer()
         self.timer.timeout.connect(lambda: self.update_frame(num_layers, rollouts))
         interval = 700
@@ -59,7 +62,15 @@ class RolloutWidget(QWidget):
         return rollout_matrices
 
     def update_frame(self, num_layers, rollouts):
-        self.im.set_data(rollouts[self.current_layer])
+        frame = rollouts[self.current_layer]
+        self.im.set_data(frame)
+    
+        # Update color normalization dynamically
+        self.im.set_norm(colors.Normalize(
+            vmin=frame.min(),
+            vmax=frame.max()
+        ))
+
         self.ax.set_title(f"Rollout Layer {self.current_layer + 1}")
         self.canvas.draw()
         self.current_layer = (self.current_layer + 1) % num_layers

@@ -8,7 +8,7 @@ from matplotlib.figure import Figure
 class TokenInfluenceWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.figure = Figure(figsize=(7, 7)) 
+        self.figure = Figure(figsize=(4, 2)) 
         self.canvas = FigureCanvas(self.figure)
         self.toolbar = NavigationToolbar(self.canvas, self)
 
@@ -27,6 +27,8 @@ class TokenInfluenceWidget(QWidget):
         ax.set_yticklabels(tokens)
         ax.set_xticks([])
         ax.set_title("Token Influence Heatmap (Gradient x Input)")
+
+        self.figure.subplots_adjust(left=0.4, right=0.6)
         self.canvas.draw()
 
 
