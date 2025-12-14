@@ -40,7 +40,7 @@ Use the tab interface to switch between the available visualizations.
 
 The primary workspace.
 You can run text through multiple transformer models and display all visualizations at once.
-<img width="1774" height="1100" alt="grafik" src="https://github.com/user-attachments/assets/ab149a7b-7a84-4390-96b6-69638189ce00" />
+<img width="1776" height="1094" alt="grafik" src="https://github.com/user-attachments/assets/215df6a9-b528-4638-b2be-c8aa4dc70105" />
 
 ---
 
