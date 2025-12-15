@@ -15,7 +15,7 @@ conda activate nlp_proj
 
 ## **Usage**
 
-Run gui.py or the notebook (might not be implemented yet).
+Run **gui.py**
 
 ### **Random Button**
 
